@@ -1,0 +1,33 @@
+﻿<MudNavMenu>
+    
+    <MudNavGroup Title="Form Validation" Expanded="true" IconColor="Color.Secondary" Icon="@Icons.TwoTone.ReportGmailerrorred">
+        <MudNavLink Href="Input-Validation" Match="NavLinkMatch.All" 
+                    IconColor="Color.Default" 
+                    Icon="@Icons.TwoTone.Input">TextBox</MudNavLink>
+        <MudNavLink Href="/Checkbox-Validation" Match="NavLinkMatch.Prefix"
+                    IconColor="Color.Info"
+                    Icon="@Icons.TwoTone.FactCheck">Checkbox</MudNavLink>
+        <MudNavLink Href="/Radio-Validation" Match="NavLinkMatch.Prefix"
+                    IconColor="Color.Default"
+                    Icon="@Icons.TwoTone.RadioButtonChecked">Radio</MudNavLink>
+        <MudNavLink Href="/DropDown-Validation" Match="NavLinkMatch.Prefix"
+                                    IconColor="Color.Surface"
+                                    Icon="@Icons.TwoTone.ArrowDropDownCircle">Drop Down</MudNavLink>
+    </MudNavGroup>
+    
+    <MudNavLink Href="edit-form" Match="NavLinkMatch.All" IconColor="Color.Tertiary" Icon="@Icons.Filled.DynamicForm">Edit-Form</MudNavLink>
+    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
+    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
+
+    <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2">
+        <MudNavLink Href="/Inputs" Icon="@Icons.Filled.Dashboard">Inputs</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.Prefix" Href="/components/navmenu" Icon="@Icons.Filled.Storage">Servers</MudNavLink>
+        <MudNavLink Href="/thelab" Icon="@Icons.Filled.Science">The Lab</MudNavLink>
+    </MudNavMenu>
+
+    <MudNavGroup Title="Settings" Expanded="true" Icon="@Icons.TwoTone.Settings">
+        <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
+        <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>
+    </MudNavGroup>
+    
+</MudNavMenu>

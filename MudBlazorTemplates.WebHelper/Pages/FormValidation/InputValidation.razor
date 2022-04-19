@@ -1,0 +1,155 @@
+﻿@page "/Input-Validation"
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+
+
+    
+<MudCard>
+        
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <img src="svg/client.svg" Height="45" Width="45" alt="client avatar"/>
+            @*<MudIcon  Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />*@
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Edit Form </MudText>
+            <MudText Typo="Typo.caption">All Controller Binding</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default"/>
+        </CardHeaderActions>
+    </MudCardHeader>
+
+    <MudDivider Style="margin-left:8px; margin-right:8px;"/>
+
+    <MudCardContent>
+        <MudForm @ref="form" Model="_inputMode" @bind-IsValid="@success"
+                 @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField Label="Username" HelperText="Max. 8 characters"
+                                  @bind-Value="_inputMode.UserName" 
+                                  For="@(() => _inputMode.UserName)"/>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField Label="Password" HelperText="Max. 8 characters"
+                                  InputType="@PasswordInput" 
+                                  Adornment="Adornment.End" 
+                                  AdornmentIcon="@PasswordInputIcon" 
+                                  OnAdornmentClick="ButtonTestclick" 
+                                  AdornmentAriaLabel="Show Password"
+                                      @bind-Value="_inputMode.Password" 
+                                      For="@(() => _inputMode.Password)"/>
+                    </MudItem>
+                <MudItem xs="12">
+                    <MudTextField Label="First Name" HelperText="Max. 25 characters"
+                                  @bind-Value="_inputMode.FirstName" 
+                                  For="@(() => _inputMode.FirstName)"
+                                  Counter="25"
+                                  Immediate="true" 
+                                  Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                    ></MudTextField>
+                </MudItem>
+                
+            </MudGrid>
+                
+            <MudPaper Class="pa-4 mt-4 d-flex justify-end">
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Primary" DisableElevation="true"
+                           OnClick="@(async () => await Submit())"
+                >Validate</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary" DisableElevation="true" 
+                           OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           DisableElevation="true" 
+                           OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudTextField T="string" Label="Json Output Data" 
+                              ReadOnly="true"
+                              Variant="Variant.Filled" 
+                              Text="@_outputJson" Lines="3" />
+            </MudPaper>
+        </MudForm>
+    </MudCardContent>
+        
+    <MudCardActions>
+        <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default"/>
+    </MudCardActions>
+
+</MudCard>
+
+@code {
+    [Inject] ISnackbar Snackbar { get; set; }
+    MudForm form;
+    bool success;
+    //OnClick="@(()=>form.Validate())"
+    string[] errors = { };
+   public InputTextModel _inputMode = new InputTextModel();
+    
+    public class InputTextModel
+    {
+        [Required(ErrorMessage = "Username is required.")]
+        [StringLength(8, ErrorMessage = "User Name length can't be more than 8.")]
+        public string UserName { get; set; }
+        [Required(ErrorMessage = "Password is required.")]
+        [StringLength(8, ErrorMessage = "Password length can't be more than 8.")]
+        public string Password { get; set; }
+        
+        [Required(ErrorMessage = "First is required.")]
+        [StringLength(25, ErrorMessage = "Name length can't be more than 25.")]
+        public string FirstName { get; set; }
+    }
+    
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 25 < ch?.Length)
+            yield return "Max 25 characters";
+    }
+
+    string _outputJson;
+    private async Task Submit()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            //Do server actions.
+            _outputJson = JsonSerializer.Serialize(_inputMode);
+            
+            //Success Message
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            Snackbar.Configuration.SnackbarVariant = Variant.Filled;
+            //Can also be done as global configuration. Ref:
+            //https://mudblazor.com/components/snackbar#7f855ced-a24b-4d17-87fc-caf9396096a5
+            Snackbar.Add("Submited!", Severity.Success);
+        }
+    }
+
+    #region Password Show or Hide
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    void ButtonTestclick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+
+    #endregion
+
+}

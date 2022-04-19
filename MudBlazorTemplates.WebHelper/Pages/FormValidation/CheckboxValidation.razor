@@ -1,0 +1,114 @@
+﻿@page "/Checkbox-Validation"
+
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+
+
+    
+<MudCard>
+        
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <img src="svg/client.svg" Height="45" Width="45" alt="client avatar"/>
+            @*<MudIcon  Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />*@
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Edit Form </MudText>
+            <MudText Typo="Typo.caption">All Controller Binding</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default"/>
+        </CardHeaderActions>
+    </MudCardHeader>
+
+    <MudDivider Style="margin-left:8px; margin-right:8px;"/>
+
+    <MudCardContent>
+        <MudForm @ref="form" Model="_inputMode" @bind-IsValid="@success"
+                 @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudCheckBox T="bool" Required="true" 
+                                 Color="Color.Primary"
+                                 @ref="chkAgree"
+                                 @bind-Value="_inputMode.Agree" 
+                                 For="@(() => _inputMode.Agree)"
+                                 
+                                 RequiredError="You must agree" Class="ml-n2" Label="I agree!"/>
+                </MudItem>
+            </MudGrid>
+                
+            <MudPaper Class="pa-4 mt-4 d-flex justify-end">
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Primary" DisableElevation="true"
+                           OnClick="@(async () => await Submit())"
+                >Validate</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary" DisableElevation="true" 
+                           OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           DisableElevation="true" 
+                           OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudTextField T="string" Label="Json Output Data" 
+                              ReadOnly="true"
+                              Variant="Variant.Filled" 
+                              Text="@_outputJson" Lines="3" />
+            </MudPaper>
+             <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                    @foreach (var error in errors)
+                    {
+                        <MudText Color="@Color.Error">@error</MudText>
+                        Snackbar.Add(@error, Severity.Error);
+                    }
+            </MudPaper>
+        </MudForm>
+        
+    </MudCardContent>
+        
+    <MudCardActions>
+        <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default"/>
+    </MudCardActions>
+
+</MudCard>
+
+@code {
+    [Inject] ISnackbar Snackbar { get; set; }
+    MudForm form;
+    MudCheckBox<bool> chkAgree;
+    bool success;
+    //OnClick="@(()=>form.Validate())"
+    string[] errors = { };
+   public InputCheckModel _inputMode = new InputCheckModel();
+    
+    public class InputCheckModel
+    {
+        [Required(ErrorMessage = "You must agree before submit")]
+        public bool Agree { get; set; } = true;
+    }
+    
+    string _outputJson;
+    private async Task Submit()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            //Do server actions.
+            _outputJson = JsonSerializer.Serialize(_inputMode);
+            
+            //Success Message
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            Snackbar.Configuration.SnackbarVariant = Variant.Filled;
+            //Can also be done as global configuration. Ref:
+            //https://mudblazor.com/components/snackbar#7f855ced-a24b-4d17-87fc-caf9396096a5
+            Snackbar.Add("Submited!", Severity.Success);
+        }
+    }
+
+
+}

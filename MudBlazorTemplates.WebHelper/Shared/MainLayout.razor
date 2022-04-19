@@ -1,0 +1,80 @@
+﻿@inherits LayoutComponentBase
+
+
+@*
+    Ref: Theme provider
+    https://mudblazor.com/customization/overview#custom-themes
+
+*@
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Link="https://mudblazor.com/" Target="_blank" />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
+        <MudToggleIconButton             
+                    Toggled="@ThemeChanged" 
+                    ToggledChanged="OnToggledChanged"
+                     Icon="@Icons.Rounded.WbSunny" Color="Color.Warning" 
+                     Title="Off"
+                     ToggledIcon="@Icons.TwoTone.WbSunny" 
+                     ToggledColor="@Color.Success" 
+                     ToggledTitle="On"/>
+
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">
+                <a class="navbar-brand" href="" style="font-size: 24px;font-family: cursive;">
+            		<i class="icofont-butterfly-alt icofont-2x" 
+            		style="color: lightcoral; font-size: 28px;"></i> 
+            		Mud Helper
+                </a>
+            </MudText>
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-4 pt-4">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    
+    
+    
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    #region Enable Dark Theme
+    private MudTheme _theme = new();
+    private bool _isDarkMode = true;
+
+    private bool ThemeChanged 
+    {
+        get;set;
+    }
+    protected override void OnInitialized()
+    {
+    //StateHasChanged();
+        Console.WriteLine($"Dark Or Light : {_isDarkMode}");
+    }
+    public void OnToggledChanged(bool toggled)
+    {
+        // Because variable is not two-way bound, we need to update it ourself
+        ThemeChanged = toggled;
+        _isDarkMode = toggled;
+        Console.WriteLine($"Is DarkMode {_isDarkMode}");
+    }
+    #endregion
+}

@@ -1,0 +1,124 @@
+﻿@page "/Edit-Form"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+
+<MudPaper Square="true" Class="pa-4">
+    
+    <MudCard>
+        
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                <img src="svg/client.svg" Height="45" Width="45" alt="client avatar"/>
+                @*<MudIcon  Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />*@
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Edit Form </MudText>
+                <MudText Typo="Typo.caption">All Controller Binding</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default"/>
+            </CardHeaderActions>
+        </MudCardHeader>
+
+        <MudDivider Style="margin-left:8px; margin-right:8px;"/>
+
+        <MudCardContent>
+            <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator/>
+                <MudGrid>
+                    <MudItem xs="12" sm="7">
+                        <MudCard>
+                            <MudCardContent>
+                                <MudTextField Label="First name" HelperText="Max. 8 characters"
+                                              @bind-Value="model.Username" For="@(() => model.Username)"/>
+                                <MudTextField Label="Email" Class="mt-3"
+                                              @bind-Value="model.Email" For="@(() => model.Email)"/>
+                                <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                                              @bind-Value="model.Password" For="@(() => model.Password)" 
+                                              InputType="InputType.Password"/>
+                                <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
+                                              @bind-Value="model.Password2"
+                                              For="@(() => model.Password2)" InputType="InputType.Password"/>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" sm="5">
+                        <MudPaper Class="pa-4 mud-height-full">
+                            <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                            @if (success)
+                            {
+                                <MudText  Color="Color.Success">Success</MudText>
+                                <MudTextField Value="@_registerJson"></MudTextField>
+                            }
+                            else
+                            {
+                                <MudText Color="@Color.Error">
+                                    <ValidationSummary/>
+                                </MudText>
+                            }
+                            
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.body2" Align="Align.Center">
+                            Fill out the form correctly to see the success message.
+                        </MudText>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+        </MudCardContent>
+
+        <MudCardActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default"/>
+        </MudCardActions>
+
+    </MudCard>
+    
+</MudPaper>
+
+@code {
+    RegisterAccountForm model = new RegisterAccountForm();
+    bool success;
+
+    public class RegisterAccountForm
+    {
+        [Required]
+        [StringLength(8, ErrorMessage = "Name length can't be more than 8.")]
+        public string Username { get; set; } = "Ganesh";
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "sr.ganeshram@gmail.com";
+
+        [Required(ErrorMessage = "Have to be Checked")]
+        public bool IsActive { get; set; } = true;
+
+        [Required]
+        [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
+        public string Password { get; set; } = "System@123";
+
+        [Required]
+        [Compare(nameof(Password))]
+        public string Password2 { get; set; } = "System@123";
+
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+
+    string _registerJson = string.Empty;
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+        _registerJson = JsonSerializer.Serialize(model);
+    //model
+    }
+}

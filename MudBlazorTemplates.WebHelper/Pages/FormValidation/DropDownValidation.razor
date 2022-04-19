@@ -1,0 +1,174 @@
+﻿@page "/DropDown-Validation"
+
+
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.Contracts
+@using System.Text.Json
+
+
+    
+<MudCard>
+        
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <img src="svg/client.svg" Height="45" Width="45" alt="client avatar"/>
+            @*<MudIcon  Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />*@
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Edit Form </MudText>
+            <MudText Typo="Typo.caption">All Controller Binding</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default"/>
+        </CardHeaderActions>
+    </MudCardHeader>
+
+    <MudDivider Style="margin-left:8px; margin-right:8px;"/>
+
+    <MudCardContent>
+        <MudForm @ref="form" Model="_inputMode" @bind-IsValid="@success"
+                 @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudSelect @bind-Value="enumValue" Label="Select drink"
+                               Required="true" 
+                               RequiredError="Please select Drink type"
+                               HelperText="Data From Enum" OpenIcon="@Icons.Material.Filled.LocalDrink" 
+                               AdornmentColor="Color.Secondary">
+                        @foreach (Drink item in Enum.GetValues(typeof(Drink)))
+                        {
+                            <MudSelectItem Value="@item">@item</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                
+                <MudItem xs="12">
+                    <MudSelect @bind-Value="_inputMode.SelectedFood" 
+                               Required="true" 
+                               RequiredError="Any Food type is required!"
+                               Label="Select fast-food" HelperText="String binding example" 
+                               Placeholder="Please Select Fast Food" 
+                               AdornmentIcon="@Icons.Material.Filled.Fastfood"
+                               AdornmentColor="Color.Primary">
+                        <MudSelectItem Value="@("Pizza")" Disabled="true">Pizza (Disabled)</MudSelectItem>
+                        <MudSelectItem Value="@("Burger")">Burger</MudSelectItem>
+                        <MudSelectItem Value="@("Hotdog")">Hot Dog</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudSelect @bind-Value="_inputMode.BType" 
+                               Required="true" 
+                               T="BusinessType"
+                               RequiredError="Any Business type is required!"
+                               Label="Select Business Type" HelperText="Complex binding Example" 
+                               Placeholder="Please Select Business Type" 
+                               AdornmentIcon="@Icons.Material.Filled.BurstMode"
+                               AdornmentColor="Color.Primary">
+                        @foreach (BusinessType item in _BusinessType)
+                        {
+                            <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+                
+            <MudPaper Class="pa-4 mt-4 d-flex justify-end">
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Primary" DisableElevation="true"
+                           OnClick="@(async () => await Submit())"
+                >Validate</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary" DisableElevation="true" 
+                           OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           DisableElevation="true" 
+                           OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudTextField T="string" Label="Json Output Data" 
+                              ReadOnly="true"
+                              Variant="Variant.Filled" 
+                              Text="@_outputJson" Lines="3" />
+            </MudPaper>
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                    @foreach (var error in errors)
+                    {
+                        Console.WriteLine(error);
+                        <MudText Color="@Color.Error">@error</MudText>
+                        Snackbar.Add(@error, Severity.Error);
+                    }
+            </MudPaper>
+        </MudForm>
+        
+    </MudCardContent>
+        
+    <MudCardActions>
+        <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default"/>
+    </MudCardActions>
+
+</MudCard>
+
+@code {
+    [Inject] ISnackbar Snackbar { get; set; }
+    MudForm form;
+    MudCheckBox<bool> chkAgree;
+    bool success;
+    string[] errors = { };
+    string country="Austria"; //Selected Country
+   public InputSelectModel _inputMode = new InputSelectModel();
+    
+    public class InputSelectModel
+    {
+        [Required(ErrorMessage = "Drink is Required")]
+        public Drink SelectDrink { get; set; } 
+        
+        [Required(ErrorMessage = "Food Type is Required")]
+        public string SelectedFood { get; set; }
+        
+        [Required(ErrorMessage = "Business Type is Required")]
+        public BusinessType BType { get; set; }
+    }
+    public class BusinessType
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public List<BusinessType> _BusinessType = new List<BusinessType>()
+    {
+        new BusinessType() { Id = 1, Name = "Name 1" },
+        new BusinessType() { Id = 2, Name = "Name 2" },
+        new BusinessType() { Id = 3, Name = "Name 3" },
+    };
+    
+    public enum Drink { Tea, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine, Wodka, Cola, GreeTea, FruitJuice, Lemonade, HotWater, SpringWater, IceWater,  }
+    private Drink enumValue { get; set; } = Drink.HotWater;
+
+    
+    
+    string _outputJson;
+    private async Task Submit()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            //Do server actions.
+            _outputJson = JsonSerializer.Serialize(_inputMode);
+            
+            //Success Message
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            Snackbar.Configuration.SnackbarVariant = Variant.Filled;
+            //Can also be done as global configuration. Ref:
+            //https://mudblazor.com/components/snackbar#7f855ced-a24b-4d17-87fc-caf9396096a5
+            Snackbar.Add("Submited!", Severity.Success);
+        }
+    }
+
+    
+
+
+}

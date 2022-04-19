@@ -1,0 +1,185 @@
+﻿@page "/Mud-Form"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+
+@using System.Text.RegularExpressions
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudTextField T="string" Label="Username" Required="true" 
+                              RequiredError="User name is required!"/>
+                <MudTextField T="string" Label="Email" Required="true" 
+                              RequiredError="Email is required!"
+                                  Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})"/>
+                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" 
+                              @ref="pwField1"
+                                  InputType="InputType.Password"
+                                  Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                                  RequiredError="Password is required!"/>
+                    <MudTextField T="string"
+                                  Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                                  Validation="@(new Func<string, string>(PasswordMatch))"/>
+                    <div class="d-flex">
+                        <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+                            <MudRadio Option="@("Personal")">Personal</MudRadio>
+                            <MudRadio Option="@("Professional")">Professional</MudRadio>
+                        </MudRadioGroup>
+                    </div>
+                <div class="d-flex align-center justify-space-between mt-6">
+                    <MudCheckBox T="bool" Required="true" RequiredError="You must agree" 
+                                 Class="ml-n2" Label="I agree!"/>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
+                </div>
+                <MudSelect @bind-Value="@country" Label="Without render fragements" 
+                           Variant="Variant.Outlined">
+                    <MudSelectItem Value="@("Austria")" />
+                    <MudSelectItem Value="@("Hungary")" />
+                    <MudSelectItem Value="@("Sweden")" />
+                </MudSelect>
+                
+                 <MudForm @ref="form">
+                     <MudAutocomplete T="string" Label="US States" 
+                                      @bind-Value="choice1.State" Required="true"
+                         SearchFunc="@SearchAsync" Immediate="true"  ResetValueOnEmptyText="true"
+                         CloseIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary"
+                         Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto mt-3 mb-3" 
+                         OnClick="@(()=>form.Validate())">Validate</MudButton>
+                                @if (form.IsTouched && form.IsValid)
+                                {
+                                    <MudText Color="Color.Success">Success</MudText>
+                                }
+                                else
+                                {
+                                    <MudText>IsTouched: @form.IsTouched, IsValid: @form.IsValid</MudText>
+                                }
+                    </MudForm>
+            </MudForm>   
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Validate</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="5">
+        <MudPaper Class="pa-4 mud-height-full">
+            <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                @foreach (var error in errors)
+                {
+                    <MudText Color="@Color.Error">@error</MudText>
+                }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    bool success;
+    string[] errors = { };
+    MudTextField<string> pwField1;
+    MudForm form;
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return "Password must be at least of length 8";
+        if (!Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Password must contain at least one capital letter";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Password must contain at least one digit";
+    }
+
+    private string PasswordMatch(string arg)
+    {
+        if (pwField1.Value != arg)
+            return "Passwords don't match";
+        return null;
+    }
+    
+    string country="Austria"; //Selected Country
+
+
+    #region  Autocomplete Validation
+    
+    private async Task<IEnumerable<string>> SearchAsync(string value)
+    {
+    // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
+    // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+        {
+            return states;
+        }
+
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+    
+    private static string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+    private Choice choice1 = new();
+    private EditContext editContext1;
+    protected override void OnInitialized()
+    {
+        editContext1 = new EditContext(choice1);
+    } 
+    public class Choice
+    {
+        [Required]
+        public string State { get; set;}
+    }
+    private IEnumerable<string> Validate(string value)
+    {        
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            yield return "The State field is required";
+            yield break;
+        }
+
+        if (!states.Contains(value))
+        {
+            yield return "This is an incorrect value";
+        }
+    }
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
+    public sealed class StateAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            if (!states.Contains(value))
+            {
+                return new ValidationResult("This is an incorrect value", new[] { validationContext.MemberName });
+            }
+
+            return null;
+        }
+    }
+
+    #endregion
+}
