@@ -4,3 +4,5 @@
 /MudBlazorTemplates.WebHelper/bin/Debug/net6.0/*.blat
 /MudBlazorTemplates.WebHelper/obj/Debug
 *.gz
+/MudBlazorTemplates.WebHelper/bin
+/MudBlazorTemplates.WebHelper/obj
