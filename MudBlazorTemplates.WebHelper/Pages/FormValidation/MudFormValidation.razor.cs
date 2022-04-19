@@ -7,27 +7,12 @@ namespace MudBlazorTemplates.WebHelper.Pages.FormValidation;
 
 public partial class MudFormValidation
 {
+    #region Initialization
     [Inject] ISnackbar Snackbar { get; set; }
     MudForm form;
     bool success;
     string[] errors = { };
     public ClientAccount _inputMode = new ClientAccount();
-
-    private IEnumerable<string> MaxCharacters(string ch)
-    {
-        if (!string.IsNullOrEmpty(ch) && 25 < ch?.Length)
-            yield return "Max 25 characters";
-    }
-
-    private IEnumerable<string> AmountValidation(double value)
-    {
-        if (value <= 0)
-        {
-            yield return "Minimum $1 is required.";
-        }
-        //if (!string.IsNullOrEmpty(value) && 25 < ch?.Length)
-            
-    }
     public List<Product> _Products = new List<Product>()
     {
         new Product() { Id = 1, Name = "Name 1" },
@@ -42,6 +27,35 @@ public partial class MudFormValidation
         new CountryState() { Id = 3, Name = "American Samoa" },
         new CountryState() { Id = 4, Name = "Arizona" },
     };
+    #endregion
+    protected override void OnInitialized()
+    {
+        _inputMode.ProductTypes = _Products[2];//Binding to Selection control
+        _inputMode.ClientState = _countryStates[3];//Binding to Autocomplete
+        StateHasChanged();
+    }
+    
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 25 < ch?.Length)
+            yield return "Max 25 characters";
+    }
+
+    /// <summary>
+    /// Custom validation
+    /// </summary>
+    /// <param name="value">double value</param>
+    /// <returns>Error message</returns>
+    private IEnumerable<string> AmountValidation(double value)
+    {
+        if (value <= 0)
+        {
+            yield return "Minimum $1 is required.";
+        }
+        //if (!string.IsNullOrEmpty(value) && 25 < ch?.Length)
+            
+    }
+   
     private async Task<IEnumerable<CountryState>> ComplexSearchAsync(string value)
     {
         // In real life use an asynchronous function for fetching data from an api.
@@ -70,9 +84,15 @@ public partial class MudFormValidation
             //Success Message
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
             Snackbar.Configuration.SnackbarVariant = Variant.Filled;
+            //Snackbar.Configuration.VisibleStateDuration  = 2000;
             //Can also be done as global configuration. Ref:
             //https://mudblazor.com/components/snackbar#7f855ced-a24b-4d17-87fc-caf9396096a5
             Snackbar.Add("Submited!", Severity.Success);
+        }
+        else
+        {
+            _outputJson = "Validation Error occured.";
+            Console.WriteLine(_outputJson);
         }
     }
 

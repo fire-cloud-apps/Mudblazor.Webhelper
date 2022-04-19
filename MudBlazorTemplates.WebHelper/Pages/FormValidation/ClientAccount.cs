@@ -29,9 +29,10 @@ public class ClientAccount
     
     [Required(ErrorMessage = "Amount is Required")]
     public double ClientAmount { get; set; } = 100;
-    
+
     [Required(ErrorMessage = "Product is Required")]
-    public Product ProductTypes { get; set; }//Selection Box controller
+    public Product ProductTypes { get; set; } 
+    //Selection Box controller
     
     [Required(ErrorMessage = "State is Required")]
     public CountryState ClientState { get; set;}  //Auto Complete

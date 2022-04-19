@@ -29,12 +29,12 @@
                  @bind-Errors="@errors">
             <MudGrid>
                 <MudItem xs="12">
-                    <MudCheckBox T="bool" Required="true" 
+                    <MudCheckBox T="bool" 
                                  Color="Color.Primary"
                                  @ref="chkAgree"
                                  @bind-Value="_inputMode.Agree" 
                                  For="@(() => _inputMode.Agree)"
-                                 
+                                 Required="true" 
                                  RequiredError="You must agree" Class="ml-n2" Label="I agree!"/>
                 </MudItem>
             </MudGrid>
@@ -81,7 +81,6 @@
     MudForm form;
     MudCheckBox<bool> chkAgree;
     bool success;
-    //OnClick="@(()=>form.Validate())"
     string[] errors = { };
    public InputCheckModel _inputMode = new InputCheckModel();
     

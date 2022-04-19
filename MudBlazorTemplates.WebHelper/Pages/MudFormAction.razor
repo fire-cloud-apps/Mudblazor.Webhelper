@@ -31,7 +31,8 @@
                 <div class="d-flex align-center justify-space-between mt-6">
                     <MudCheckBox T="bool" Required="true" RequiredError="You must agree" 
                                  Class="ml-n2" Label="I agree!"/>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" 
+                               Disabled="@(!success)" Class="ml-auto">Register</MudButton>
                 </div>
                 <MudSelect @bind-Value="@country" Label="Without render fragements" 
                            Variant="Variant.Outlined">

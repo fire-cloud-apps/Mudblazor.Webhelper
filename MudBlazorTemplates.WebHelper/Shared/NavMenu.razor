@@ -17,11 +17,14 @@
                     IconColor="Color.Success"
                     Icon="@Icons.TwoTone.ManageSearch">Auto Complete</MudNavLink>
         
-        <MudTooltip Text="All Validation in One Form" Arrow="true" Placement="Placement.Right">
-             <MudNavLink Href="MudForm-Validation" Match="NavLinkMatch.Prefix" 
-                                IconColor="Color.Tertiary"
-                                Icon="@Icons.Filled.DynamicForm">MudForm</MudNavLink>
-        </MudTooltip>
+        <MudNavLink Href="MudForm-Validation" Match="NavLinkMatch.Prefix"
+                        IconColor="Color.Tertiary"
+                        Icon="@Icons.Filled.DynamicForm">
+                <MudTooltip Text="All Validation in One Form" Arrow="true" Placement="Placement.Right">
+                    <MudText Typo="Typo.body2">MudForm</MudText> 
+                </MudTooltip> 
+            </MudNavLink>
+      
        
     </MudNavGroup>
     

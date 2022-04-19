@@ -100,10 +100,12 @@
                                      Format="F1"  />
                 </MudItem>
                 <MudItem xs="4">
-                    <MudSelect @bind-Value="_inputMode.ProductTypes" Label="Select Product"
+                    <MudSelect @bind-Value="_inputMode.ProductTypes"
+                               Label="Select Product"
                                Required="true" 
                                RequiredError="Please select Product type"
-                               HelperText="Data From Product type" OpenIcon="@Icons.Material.Filled.LocalDrink" 
+                               HelperText="Data From Product type" 
+                               OpenIcon="@Icons.Material.Filled.LocalDrink" 
                                AdornmentColor="Color.Secondary">
                         @foreach (Product item in _Products)
                         {
@@ -120,16 +122,19 @@
                                      RequiredError="Please Select Complex State"
                                      SearchFunc="@ComplexSearchAsync" Immediate="true"  
                                      ResetValueOnEmptyText="true"
-                                     CloseIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary"
+                                     CloseIcon="@Icons.Material.Filled.Search" 
+                                     AdornmentColor="Color.Tertiary"
                                                         
                     /> 
                     @* Validation="@(new Func<string, IEnumerable<string>>(Validate))" *@
                 </MudItem>
                 <MudItem xs="12">
                     <MudCheckBox T="bool"
-                                 @bind-Checked="@_inputMode.IsAgree"
-                                 Required="true" RequiredError="You must agree" 
+                                 @bind-Value="_inputMode.IsAgree" 
+                                 Required="true" 
+                                 RequiredError="You must agree" 
                                  Class="ml-n2" Label="I agree!"
+                                 For="@(() => _inputMode.IsAgree)"
                                  />
                 </MudItem>
             </MudGrid>
@@ -151,6 +156,14 @@
                               ReadOnly="true"
                               Variant="Variant.Filled" 
                               Text="@_outputJson" Lines="3" />
+            </MudPaper>
+             <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                    @foreach (var error in errors)
+                    {
+                        <MudText Color="@Color.Error">@error</MudText>
+                        Snackbar.Add(@error, Severity.Error);
+                    }
             </MudPaper>
         </MudForm>
     </MudCardContent>
