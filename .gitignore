@@ -1,0 +1,5 @@
+*.dll
+/MudBlazorTemplates.WebHelper/bin/Debug/net6.0/*.dat
+/MudBlazorTemplates.WebHelper/bin/Debug/net6.0/*.wasm
+/MudBlazorTemplates.WebHelper/bin/Debug/net6.0/*.blat
+/MudBlazorTemplates.WebHelper/obj/Debug
