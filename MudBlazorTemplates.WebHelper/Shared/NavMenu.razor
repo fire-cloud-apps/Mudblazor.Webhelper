@@ -1,6 +1,6 @@
 ﻿<MudNavMenu>
     
-    <MudNavGroup Title="Form Validation" Expanded="true" IconColor="Color.Secondary" Icon="@Icons.TwoTone.ReportGmailerrorred">
+    <MudNavGroup Title="Form Validation" Expanded="false" IconColor="Color.Secondary" Icon="@Icons.TwoTone.ReportGmailerrorred">
         <MudNavLink Href="Input-Validation" Match="NavLinkMatch.All" 
                     IconColor="Color.Default" 
                     Icon="@Icons.TwoTone.Input">TextBox</MudNavLink>
@@ -8,14 +8,24 @@
                     IconColor="Color.Info"
                     Icon="@Icons.TwoTone.FactCheck">Checkbox</MudNavLink>
         <MudNavLink Href="/Radio-Validation" Match="NavLinkMatch.Prefix"
-                    IconColor="Color.Default"
+                    IconColor="Color.Warning"
                     Icon="@Icons.TwoTone.RadioButtonChecked">Radio</MudNavLink>
         <MudNavLink Href="/DropDown-Validation" Match="NavLinkMatch.Prefix"
-                                    IconColor="Color.Surface"
-                                    Icon="@Icons.TwoTone.ArrowDropDownCircle">Drop Down</MudNavLink>
+                    IconColor="Color.Surface"
+                    Icon="@Icons.TwoTone.ArrowDropDownCircle">Drop Down</MudNavLink>
+        <MudNavLink Href="/Autocomplete-Validation" Match="NavLinkMatch.Prefix"
+                    IconColor="Color.Success"
+                    Icon="@Icons.TwoTone.ManageSearch">Auto Complete</MudNavLink>
+        
+        <MudTooltip Text="All Validation in One Form" Arrow="true" Placement="Placement.Right">
+             <MudNavLink Href="MudForm-Validation" Match="NavLinkMatch.Prefix" 
+                                IconColor="Color.Tertiary"
+                                Icon="@Icons.Filled.DynamicForm">MudForm</MudNavLink>
+        </MudTooltip>
+       
     </MudNavGroup>
     
-    <MudNavLink Href="edit-form" Match="NavLinkMatch.All" IconColor="Color.Tertiary" Icon="@Icons.Filled.DynamicForm">Edit-Form</MudNavLink>
+    
     <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
     <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
 
@@ -25,7 +35,7 @@
         <MudNavLink Href="/thelab" Icon="@Icons.Filled.Science">The Lab</MudNavLink>
     </MudNavMenu>
 
-    <MudNavGroup Title="Settings" Expanded="true" Icon="@Icons.TwoTone.Settings">
+    <MudNavGroup Title="Settings" Expanded="false" Icon="@Icons.TwoTone.Settings">
         <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
         <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>
     </MudNavGroup>

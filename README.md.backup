@@ -5,11 +5,7 @@ A helper application on how to use MudBlazor controls and validate the same to r
 1. TextBox
 2. Radio
 3. Checkbox
-4. Selection
-5. Auto Complete
-6. All in One Validation
-
-
+4. 
 
 ##### Help
 [Publish Blazor in Netlify](https://swimburger.net/blog/dotnet/how-to-deploy-blazor-webassembly-to-netlify)

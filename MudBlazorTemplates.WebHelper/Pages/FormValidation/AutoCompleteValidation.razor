@@ -1,0 +1,215 @@
+﻿@page "/Autocomplete-Validation"
+
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.Contracts
+@using System.Text.Json
+
+<MudCard>
+        
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <img src="svg/client.svg" Height="45" Width="45" alt="client avatar"/>
+            @*<MudIcon  Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />*@
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">AutoComplete</MudText>
+            <MudText Typo="Typo.caption">AutoComplete Validation & Binding</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default"/>
+        </CardHeaderActions>
+    </MudCardHeader>
+
+    <MudDivider Style="margin-left:8px; margin-right:8px;"/>
+
+    <MudCardContent>
+        <MudForm @ref="form" Model="_inputMode" @bind-IsValid="@success"
+                 @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudAutocomplete T="string" Label="US States" 
+                                     HelperText="String binding example" 
+                                     @bind-Value="_inputMode.SelectState" 
+                                     Required="true"
+                                     RequiredError="Please Select State"
+                                     SearchFunc="@SearchAsync" Immediate="true"  ResetValueOnEmptyText="true"
+                                     CloseIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary"
+                    />
+                </MudItem>
+                @* Validation="@(new Func<string, IEnumerable<string>>(Validate))" 
+                This method will be useful if we have Editform, for this we are using mudform.
+                *@
+                <MudItem xs="12">
+                        <MudAutocomplete T="CountryState" Label="US States" 
+                                         HelperText="Complex binding example"
+                                         @bind-Value="_inputMode.SelectComplexState" 
+                                         ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Id})")"
+                                         Required="true"
+                                         RequiredError="Please Select Complex State"
+                                         SearchFunc="@ComplexSearchAsync" Immediate="true"  
+                                         ResetValueOnEmptyText="true"
+                                         CloseIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary"
+                                        
+                        /> 
+                        @* Validation="@(new Func<string, IEnumerable<string>>(Validate))" *@
+                    </MudItem>
+               
+            </MudGrid>
+                
+            <MudPaper Class="pa-4 mt-4 d-flex justify-end">
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Primary" DisableElevation="true"
+                           OnClick="@(async () => await Submit())"
+                >Validate</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary" DisableElevation="true" 
+                           OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           DisableElevation="true" 
+                           OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudTextField T="string" Label="Json Output Data" 
+                              ReadOnly="true"
+                              Variant="Variant.Filled" 
+                              Text="@_outputJson" Lines="3" />
+            </MudPaper>
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                    @foreach (var error in errors)
+                    {
+                        Console.WriteLine(error);
+                        <MudText Color="@Color.Error">@error</MudText>
+                        Snackbar.Add(@error, Severity.Error);
+                    }
+            </MudPaper>
+        </MudForm>
+        
+    </MudCardContent>
+        
+    <MudCardActions>
+        <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default"/>
+    </MudCardActions>
+
+</MudCard>
+
+@code {
+    [Inject] ISnackbar Snackbar { get; set; }
+    MudForm form;
+    bool success;
+    string[] errors = { };
+    
+    #region Autocomplete Validation
+
+    //private EditContext editContext1;
+    protected override void OnInitialized()
+    {
+        //editContext1 = new EditContext(_inputMode);
+    } 
+    
+   public InputSearchModel _inputMode = new InputSearchModel();
+    
+    public class InputSearchModel
+    {
+        [Required(ErrorMessage = "State is Required")]
+        public string SelectState { get; set;}  
+        
+        [Required(ErrorMessage = "Complex State is Required")]
+        public CountryState SelectComplexState { get; set;}  
+    }
+
+    public List<CountryState> _countryStates = new List<CountryState>()
+    {
+        new CountryState() { Id = 1, Name = "Alabama" },
+        new CountryState() { Id = 2, Name = "Alaska" },
+        new CountryState() { Id = 3, Name = "American Samoa" },
+        new CountryState() { Id = 4, Name = "Arizona" },
+    };
+    
+    #region Userful when we user Edit Form
+
+    // private IEnumerable<string> Validate(string value)
+    // {        
+    //     if (string.IsNullOrWhiteSpace(value))
+    //     {
+    //         yield return "The State field is required";
+    //         yield break;
+    //     }
+    //
+    //     if (!states.Contains(value))
+    //     {
+    //         yield return "This is an incorrect value";
+    //     }
+    // }
+
+    #endregion
+    private async Task<IEnumerable<CountryState>> ComplexSearchAsync(string value)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+        {
+            return _countryStates;
+        }
+
+        return _countryStates.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+    
+    private async Task<IEnumerable<string>> SearchAsync(string value)
+    {
+    // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
+    // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+        {
+            return states;
+        }
+
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+    private static string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    #endregion
+
+    string _outputJson;
+    private async Task Submit()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            //Do server actions.
+            _outputJson = JsonSerializer.Serialize(_inputMode);
+            
+            //Success Message
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            Snackbar.Configuration.SnackbarVariant = Variant.Filled;
+            //Can also be done as global configuration. Ref:
+            //https://mudblazor.com/components/snackbar#7f855ced-a24b-4d17-87fc-caf9396096a5
+            Snackbar.Add("Submited!", Severity.Success);
+        }
+    }
+
+}
