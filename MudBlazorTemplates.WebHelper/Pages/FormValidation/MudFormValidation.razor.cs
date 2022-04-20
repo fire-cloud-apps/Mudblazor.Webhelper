@@ -28,8 +28,16 @@ public partial class MudFormValidation
         new CountryState() { Id = 4, Name = "Arizona" },
     };
     #endregion
-    protected override void OnInitialized()
+
+    private bool _loading = false;
+    protected override async Task OnInitializedAsync()
     {
+        _loading = true;
+        await  Task.Delay(2000);
+        _loading = false;
+        
+        StateHasChanged();
+        Console.WriteLine("Render Completed.");
         _inputMode.ProductTypes = _Products[2];//Binding to Selection control
         _inputMode.ClientState = _countryStates[3];//Binding to Autocomplete
         StateHasChanged();
@@ -39,6 +47,13 @@ public partial class MudFormValidation
     {
         if (!string.IsNullOrEmpty(ch) && 25 < ch?.Length)
             yield return "Max 25 characters";
+    }
+
+    private MudTextField<string> txtDescription;
+    private IEnumerable<string> Max300Characters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 300 < ch?.Length)
+            yield return $"Max 300 characters";
     }
 
     /// <summary>
@@ -69,15 +84,25 @@ public partial class MudFormValidation
         return _countryStates.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    
-    string _outputJson;
 
+    #region Submit Button with Animation
+    string _outputJson;
+    private bool _processing = false;
+    async Task ProcessSomething()
+    {
+        _processing = true;
+        await Task.Delay(2000);
+        _processing = false;
+    }
     private async Task Submit()
     {
         await form.Validate();
 
         if (form.IsValid)
         {
+            // //Todo some animation.
+            await ProcessSomething();
+            
             //Do server actions.
             _outputJson = JsonSerializer.Serialize(_inputMode);
 
@@ -95,7 +120,8 @@ public partial class MudFormValidation
             Console.WriteLine(_outputJson);
         }
     }
-
+    #endregion
+    
     #region Password Show or Hide
 
     string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;

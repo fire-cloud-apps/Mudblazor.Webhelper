@@ -1,6 +1,7 @@
 ﻿<MudNavMenu>
     
-    <MudNavGroup Title="Form Validation" Expanded="false" IconColor="Color.Secondary" Icon="@Icons.TwoTone.ReportGmailerrorred">
+    <MudNavGroup Title="Form Validation" Expanded="false" IconColor="Color.Secondary" 
+                 Icon="@Icons.TwoTone.ReportGmailerrorred">
         <MudNavLink Href="Input-Validation" Match="NavLinkMatch.All" 
                     IconColor="Color.Default" 
                     Icon="@Icons.TwoTone.Input">TextBox</MudNavLink>
@@ -18,20 +19,25 @@
                     Icon="@Icons.TwoTone.ManageSearch">Auto Complete</MudNavLink>
         
         <MudNavLink Href="MudForm-Validation" Match="NavLinkMatch.Prefix"
-                        IconColor="Color.Tertiary"
-                        Icon="@Icons.Filled.DynamicForm">
-                <MudTooltip Text="All Validation in One Form" Arrow="true" Placement="Placement.Right">
-                    <MudText Typo="Typo.body2">MudForm</MudText> 
-                </MudTooltip> 
-            </MudNavLink>
+                    IconColor="Color.Tertiary"
+                    Icon="@Icons.Filled.DynamicForm">
+            <MudTooltip Text="All Validation in One Form" Arrow="true" Placement="Placement.Right">
+                <MudText Typo="Typo.body2">MudForm</MudText> 
+            </MudTooltip> 
+        </MudNavLink>
       
-       
+    </MudNavGroup>
+    <MudNavGroup Title="Data View" Expanded="false" IconColor="Color.Secondary"
+                 Icon="@Icons.TwoTone.ReportGmailerrorred">
+        <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" 
+                    Icon="@Icons.Material.Filled.List">Simple Grid</MudNavLink>
+        <MudNavLink Href="ServerPaging" Match="NavLinkMatch.Prefix" 
+                    IconColor="Color.Tertiary"
+                    Icon="@Icons.TwoTone.ViewList">Server Paging</MudNavLink>
     </MudNavGroup>
     
-    
     <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
-
+   
     <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2">
         <MudNavLink Href="/Inputs" Icon="@Icons.Filled.Dashboard">Inputs</MudNavLink>
         <MudNavLink Match="NavLinkMatch.Prefix" Href="/components/navmenu" Icon="@Icons.Filled.Storage">Servers</MudNavLink>

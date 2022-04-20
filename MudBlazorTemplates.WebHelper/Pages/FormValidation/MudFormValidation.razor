@@ -25,147 +25,175 @@
     <MudDivider Style="margin-left:8px; margin-right:8px;"/>
 
     <MudCardContent>
-        <MudForm @ref="form" Model="_inputMode" @bind-IsValid="@success"
-                 @bind-Errors="@errors">
-            <MudGrid>
-                <MudItem xs="4">
-                    <MudTextField Label="First Name" HelperText="Max. 50 characters"
-                                  @bind-Value="_inputMode.FirstName" 
-                                  For="@(() => _inputMode.FirstName)"
-                                  Counter="50"
-                                  MaxLength="50"
-                                  Immediate="true" 
-                                  Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"/>
-                </MudItem>
-                <MudItem xs="4">
-                    <MudTextField Label="Last Name" HelperText="Max. 50 characters"
-                                  @bind-Value="_inputMode.LastName" 
-                                  For="@(() => _inputMode.LastName)"
-                                  Counter="50"
-                                  MaxLength="50"
-                                  Immediate="true" 
-                                  Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"/>
-                </MudItem>
-                <MudItem xs="4">
-                    <MudTextField Label="Password" HelperText="Max. 8 characters"
-                                  InputType="@PasswordInput" 
-                                  Adornment="Adornment.End" 
-                                  MaxLength="8"
-                                  AdornmentIcon="@PasswordInputIcon" 
-                                  OnAdornmentClick="ButtonTestclick" 
-                                  AdornmentAriaLabel="Show Password"
-                                  @bind-Value="_inputMode.Password" 
-                                  For="@(() => _inputMode.Password)"/>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudTextField Label="Description" HelperText="Max. 300 characters"
-                                  @bind-Value="_inputMode.Description" 
-                                  For="@(() => _inputMode.Description)"
-                                  Lines="3"
-                                  Counter="300"
-                                  MaxLength="300"
-                                  Immediate="true" 
-                                  Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"/>
-                </MudItem>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.body1">Client Business Type </MudText>
-                    <MudRadioGroup @bind-SelectedOption="_inputMode.ClientType" 
-                                   Required="true" RequiredError="Business type is required!">
-                        @foreach (BusinessType item in Enum.GetValues(typeof(BusinessType)))
-                        {
-                            <MudRadio Option="@(item)">@item</MudRadio>
-                        }
-                        @* For string binding.
-                         <MudRadio Option="@("Personal")">Personal</MudRadio> *@
-                        @* <MudRadio Option="@("Professional")">Professional</MudRadio> *@
-                    </MudRadioGroup>
-                </MudItem>
-                <MudItem xs="6">
-                    <MudSwitch @bind-Checked="@_inputMode.AccountActive"
-                               Color="Color.Success" 
-                               Label="Is Account Active" ></MudSwitch>
-                </MudItem>
-                <MudItem xs="4">
-                    <MudDatePicker Label="Registered Date"
-                                   @bind-Date="_inputMode.RegisteredDate" 
-                                   DateFormat="dd.MM.yyyy" 
-                    />
-                </MudItem>
-                <MudItem xs="4">
-                    <MudNumericField @bind-Value="_inputMode.ClientAmount" 
-                                     Label="Enter a Client Amount" 
-                                     Adornment="Adornment.Start" 
-                                     AdornmentIcon="@Icons.Material.Filled.AttachMoney"
-                                     Validation="@(new Func<double, IEnumerable<string>>(AmountValidation))"
-                                     Format="F1"  />
-                </MudItem>
-                <MudItem xs="4">
-                    <MudSelect @bind-Value="_inputMode.ProductTypes"
-                               Label="Select Product"
-                               Required="true" 
-                               RequiredError="Please select Product type"
-                               HelperText="Data From Product type" 
-                               OpenIcon="@Icons.Material.Filled.LocalDrink" 
-                               AdornmentColor="Color.Secondary">
-                        @foreach (Product item in _Products)
-                        {
-                            <MudSelectItem Value="@item">@item.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudAutocomplete T="CountryState" Label="US States" 
-                                     HelperText="Select State of the client "
-                                     @bind-Value="_inputMode.ClientState" 
-                                     ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Id})")"
-                                     Required="true"
-                                     RequiredError="Please Select Complex State"
-                                     SearchFunc="@ComplexSearchAsync" Immediate="true"  
-                                     ResetValueOnEmptyText="true"
-                                     CloseIcon="@Icons.Material.Filled.Search" 
-                                     AdornmentColor="Color.Tertiary"
-                                                        
-                    /> 
-                    @* Validation="@(new Func<string, IEnumerable<string>>(Validate))" *@
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox T="bool"
-                                 @bind-Value="_inputMode.IsAgree" 
-                                 Required="true" 
-                                 RequiredError="You must agree" 
-                                 Class="ml-n2" Label="I agree!"
-                                 For="@(() => _inputMode.IsAgree)"
-                                 />
-                </MudItem>
-            </MudGrid>
-                
-            <MudPaper Class="pa-4 mt-4 d-flex justify-end">
-                <MudButton Variant="Variant.Filled" 
-                           Color="Color.Primary" DisableElevation="true"
-                           OnClick="@(async () => await Submit())"
-                >Submit</MudButton>
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Secondary" DisableElevation="true" 
-                           OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-                <MudButton Variant="Variant.Filled"
-                           DisableElevation="true" 
-                           OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
-            </MudPaper>
-            <MudPaper Class="pa-4 mt-4">
-                <MudTextField T="string" Label="Json Output Data" 
-                              ReadOnly="true"
-                              Variant="Variant.Filled" 
-                              Text="@_outputJson" Lines="3" />
-            </MudPaper>
-             <MudPaper Class="pa-4 mud-height-full">
-                <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
-                    @foreach (var error in errors)
-                    {
-                        <MudText Color="@Color.Error">@error</MudText>
-                        Snackbar.Add(@error, Severity.Error);
-                    }
-            </MudPaper>
-        </MudForm>
+         @if (_loading)
+            {
+                <MudSkeleton Class="my-2" />
+                <MudSkeleton Class="my-2" SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" />
+                <MudSkeleton Class="my-2" SkeletonType="SkeletonType.Rectangle" Height="50px" />
+                <MudSkeleton Class="my-2" SkeletonType="SkeletonType.Rectangle" Height="5px" />
+                <MudSkeleton Class="my-2" SkeletonType="SkeletonType.Rectangle" Height="50px" />
+                <MudSkeleton Class="my-2" />
+                Console.WriteLine("Loading..");
+            }
+         else
+         {
+             Console.WriteLine("Mud loaded.");
+             <MudForm @ref="form" Model="_inputMode" @bind-IsValid="@success"
+                      @bind-Errors="@errors">
+                 <MudGrid>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudTextField Label="First Name" HelperText="Max. 50 characters"
+                                       @bind-Value="_inputMode.FirstName"
+                                       For="@(() => _inputMode.FirstName)"
+                                       Counter="50"
+                                       MaxLength="50"
+                                       Immediate="true"
+                                       Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"/>
+                     </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudTextField Label="Last Name" HelperText="Max. 50 characters"
+                                       @bind-Value="_inputMode.LastName"
+                                       For="@(() => _inputMode.LastName)"
+                                       Counter="50"
+                                       MaxLength="50"
+                                       Immediate="true"
+                                       Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"/>
+                     </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudTextField Label="Password" HelperText="Max. 8 characters"
+                                       InputType="@PasswordInput"
+                                       Adornment="Adornment.End"
+                                       MaxLength="8"
+                                       AdornmentIcon="@PasswordInputIcon"
+                                       OnAdornmentClick="ButtonTestclick"
+                                       AdornmentAriaLabel="Show Password"
+                                       @bind-Value="_inputMode.Password"
+                                       For="@(() => _inputMode.Password)"/>
+                     </MudItem>
+                     <MudItem xs="12">
+                         <MudTextField @ref="txtDescription" Label="Description"
+                                       HelperText="Max. 300 characters"
+                                       @bind-Value="_inputMode.Description"
+                                       For="@(() => _inputMode.Description)"
+                                       Lines="3"
+                                       Counter="300"
+                                       MaxLength="330"
+                                       Immediate="true"
+                                       Validation="@(new Func<string, IEnumerable<string>>(Max300Characters))"/>
+                     </MudItem>
+                     <MudItem xs="12" sm="8" md="6">
+                         
+                         <MudCard Outlined="true">
+                             <MudCardContent>
+                                 <MudText Typo="Typo.body1">Client Business Type </MudText>
+                                 <MudRadioGroup @bind-SelectedOption="_inputMode.ClientType"
+                                                Required="true" RequiredError="Business type is required!">
+                                     @foreach (BusinessType item in Enum.GetValues(typeof(BusinessType)))
+                                     {
+                                         <MudRadio Option="@(item)">@item</MudRadio>
+                                     }
+                                     @* For string binding.
+                                                                                       <MudRadio Option="@("Personal")">Personal</MudRadio> *@
+                                     @* <MudRadio Option="@("Professional")">Professional</MudRadio> *@
+                                 </MudRadioGroup>
+                             </MudCardContent>
+                         </MudCard>
+
+                     </MudItem>
+                     <MudItem xs="12" sm="4" md="2">
+                         <MudSwitch @bind-Checked="@_inputMode.AccountActive"
+                                    Color="Color.Success"
+                                    Label="Is Active"></MudSwitch>
+                     </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudDatePicker Label="Registered Date"
+                                        @bind-Date="_inputMode.RegisteredDate"
+                                        DateFormat="dd.MM.yyyy"/>
+                     </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudNumericField @bind-Value="_inputMode.ClientAmount"
+                                          Label="Enter a Client Amount"
+                                          Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.AttachMoney"
+                                          Validation="@(new Func<double, IEnumerable<string>>(AmountValidation))"
+                                          Format="F1"/>
+                     </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudSelect @bind-Value="_inputMode.ProductTypes"
+                                    Label="Select Product"
+                                    Required="true"
+                                    RequiredError="Please select Product type"
+                                    HelperText="Data From Product type"
+                                    OpenIcon="@Icons.Material.Filled.LocalDrink"
+                                    AdornmentColor="Color.Secondary">
+                             @foreach (Product item in _Products)
+                             {
+                                 <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+                             }
+                         </MudSelect>
+                     </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudAutocomplete T="CountryState" Label="US States"
+                                          HelperText="Select State of the client "
+                                          @bind-Value="_inputMode.ClientState"
+                                          ToStringFunc="@(e => e == null ? null : $"{e.Name} ({e.Id})")"
+                                          Required="true"
+                                          RequiredError="Please Select Complex State"
+                                          SearchFunc="@ComplexSearchAsync" Immediate="true"
+                                          ResetValueOnEmptyText="true"
+                                          CloseIcon="@Icons.Material.Filled.Search"
+                                          AdornmentColor="Color.Tertiary"/>
+                         @* Validation="@(new Func<string, IEnumerable<string>>(Validate))" *@
+                     </MudItem>
+                     <MudItem xs="12" sm="6" md="4">
+                         <MudCheckBox T="bool"
+                                      @bind-Value="_inputMode.IsAgree"
+                                      Required="true"
+                                      RequiredError="You must agree"
+                                      Class="ml-n2" Label="I agree!"
+                                      For="@(() => _inputMode.IsAgree)"/>
+                     </MudItem>
+                 </MudGrid>
+
+                 <MudPaper Class="pa-4 mt-4 d-flex justify-end">
+                     <MudButton Variant="Variant.Filled"
+                                StartIcon="@Icons.Filled.Input"
+                                Color="Color.Primary" DisableElevation="true"
+                                OnClick="@(async () => await Submit())">
+                         @if (_processing)
+                         {
+                             <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                             <MudText Class="ms-2">Processing</MudText>
+                         }
+                         else
+                         {
+                             <MudText>Submit</MudText>
+                         }
+                     </MudButton>
+                     <MudButton Variant="Variant.Filled"
+                                Color="Color.Secondary" DisableElevation="true"
+                                OnClick="@(() => form.Reset())" Class="mx-2">Reset</MudButton>
+                     <MudButton Variant="Variant.Filled"
+                                DisableElevation="true"
+                                OnClick="@(() => form.ResetValidation())">Reset Validation</MudButton>
+                 </MudPaper>
+                 <MudPaper Class="pa-4 mt-4">
+                     <MudTextField T="string" Label="Json Output Data"
+                                   ReadOnly="true"
+                                   Variant="Variant.Filled"
+                                   Text="@_outputJson" Lines="3"/>
+                 </MudPaper>
+                 <MudPaper Class="pa-4 mud-height-full">
+                     <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                     @foreach (var error in errors)
+                     {
+                         <MudText Color="@Color.Error">@error</MudText>
+                         Snackbar.Add(@error, Severity.Error);
+                     }
+                 </MudPaper>
+             </MudForm>
+         }
+        
     </MudCardContent>
         
     <MudCardActions Class="pa-4 mt-4 d-flex justify-end">
