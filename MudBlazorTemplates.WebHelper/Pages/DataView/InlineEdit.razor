@@ -1,0 +1,105 @@
+﻿@page "/Inline-Edit"
+
+@using System.Net.Http.Json
+@using MudBlazorTemplates.WebHelper.Model
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+
+<MudTable Items="@Users" Dense="@dense" Hover="@hover" 
+          ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" 
+                    Filter="new Func<User,bool>(FilterFunc)"
+                    @bind-SelectedItem="selectedItem1" SortLabel="Sort By" 
+                    CommitEditTooltip="Commit Edit"
+                    OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" 
+                    RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+                    RowEditCommit="ItemHasBeenCommitted" 
+                    IsEditRowSwitchingBlocked="@blockSwitch"
+>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Users</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <ColGroup>
+        <col style="width:50px;" />
+        <col style="width:50px;" />
+        <col style="width:50px;" />
+        <col />
+        <col />
+        <col style="width:50px;" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<User, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<User, object>(x=>x.Email)">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<User, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<User, object>(x=>x.Status)">Status</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<User, object>(x=>x.Gender)">Gender</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">
+            <MudLink Href="@("/Edit-Form/?Id=" + context.Id)">@context.Id</MudLink>
+           
+        </MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Status">@context.Status</MudTd>
+        <MudTd DataLabel="Gender">@context.Gender</MudTd>
+    </RowTemplate>
+    
+    <RowEditingTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Email">
+            <MudTextField @bind-Value="@context.Email" Required />
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name" Required />
+        </MudTd>
+        <MudTd DataLabel="Status">
+            <MudSwitch @bind-Checked="@context.Status"
+                       Color="Color.Success"
+                       Label="Is Active"></MudSwitch>
+        </MudTd>
+        <MudTd DataLabel="Gender">
+            <MudSelect @bind-Value="@context.Gender"
+                       Required="true" 
+                       RequiredError="Any Gender type is required!"
+                       Label="Select Gender" HelperText="Select Gender Type" 
+                       Placeholder="Select Gender" 
+                       AdornmentIcon="@Icons.Material.Filled.Fastfood"
+                       AdornmentColor="Color.Primary">
+                <MudSelectItem Value="@("Male")" >Male</MudSelectItem>
+                <MudSelectItem Value="@("Female")">Female</MudSelectItem>
+                <MudSelectItem Value="@("Other")">Other</MudSelectItem>
+            </MudSelect>
+        </MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+<MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
+<MudSwitch @bind-Checked="@canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
+<MudSwitch @bind-Checked="@blockSwitch" Color="Color.Success">Block Edit Row Switching</MudSwitch>
+<MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
+
+<MudExpansionPanels Style="flex: 1;">
+    <MudExpansionPanel Text="Show inline-edit event log">
+        @foreach (var message in editEvents)
+        {
+<MudText>@message</MudText>}
+        @if (editEvents.Count > 0)
+        {
+<div class="d-flex">
+    <MudSpacer />
+    <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="ClearEventLog">Clear event log</MudButton>
+</div>}
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+
+
+}

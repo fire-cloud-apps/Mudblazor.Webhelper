@@ -1,5 +1,7 @@
 ﻿@page "/fetchdata"
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
+
 @using MudBlazorTemplates.WebHelper.Shared
 
 <PageTitle>Weather forecast</PageTitle>
@@ -37,6 +39,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Http.BaseAddress = new Uri(NavigationManager.Uri);
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
     public class WeatherForecast

@@ -27,13 +27,16 @@
         </MudNavLink>
       
     </MudNavGroup>
-    <MudNavGroup Title="Data View" Expanded="false" IconColor="Color.Secondary"
-                 Icon="@Icons.TwoTone.ReportGmailerrorred">
+    <MudNavGroup Title="Data View" Expanded="false" IconColor="Color.Surface"
+                 Icon="@Icons.TwoTone.DataArray">
         <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" 
                     Icon="@Icons.Material.Filled.List">Simple Grid</MudNavLink>
         <MudNavLink Href="ServerPaging" Match="NavLinkMatch.Prefix" 
                     IconColor="Color.Tertiary"
                     Icon="@Icons.TwoTone.ViewList">Server Paging</MudNavLink>
+         <MudNavLink Href="Inline-Edit" Match="NavLinkMatch.Prefix" 
+                            IconColor="Color.Tertiary"
+                            Icon="@Icons.TwoTone.EditAttributes">Inline Edit</MudNavLink>
     </MudNavGroup>
     
     <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
