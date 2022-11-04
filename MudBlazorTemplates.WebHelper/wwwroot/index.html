@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="icon/icofont/icofont.min.css">
     <link href="manifest.json" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -78,7 +79,39 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
-        <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
+
+<script>
+    function AjaxCall(message) 
+    {
+        var url = "https://localhost:65501/api/values";
+        var result;
+        var settings = {
+            "url": url,
+            "method": "GET",
+            "timeout": 0,
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            result = response;
+        });
+        return result;
+        // var xhr = new XMLHttpRequest();
+        // xhr.open("GET", url);
+        //
+        // xhr.onreadystatechange = function () {
+        //     if (xhr.readyState === 4) {
+        //         //console.log(xhr.status);
+        //         console.log(xhr.responseText);
+        //     }};
+        // xhr.send();
+
+        //alert( "Handler for .click() called." );
+        //return xhr.responseText;
+        //return message;
+    }
+</script>
 </body>
 
 </html>

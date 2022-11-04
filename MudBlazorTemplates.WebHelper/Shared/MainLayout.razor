@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazorTemplates.WebHelper.Pages.FormValidation
+@inherits LayoutComponentBase
 
 
 @*
@@ -17,14 +18,17 @@
         <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Link="https://mudblazor.com/" Target="_blank" />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
         <MudToggleIconButton             
-                    Toggled="@ThemeChanged" 
-                    ToggledChanged="OnToggledChanged"
-                     Icon="@Icons.Rounded.WbSunny" Color="Color.Warning" 
-                     Title="Off"
-                     ToggledIcon="@Icons.TwoTone.WbSunny" 
-                     ToggledColor="@Color.Success" 
-                     ToggledTitle="On"/>
-
+            Toggled="@ThemeChanged" 
+            ToggledChanged="OnToggledChanged"
+            Icon="@Icons.Rounded.WbSunny" Color="Color.Warning" 
+            Title="Off"
+            ToggledIcon="@Icons.TwoTone.WbSunny" 
+            ToggledColor="@Color.Success" 
+            ToggledTitle="On"/>
+        <MudIconButton Icon="@Icons.TwoTone.Logout" 
+                       Color="Color.Error"
+                       Link="/Logout" Target="_blank" />
+        
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
         <MudDrawerHeader>
@@ -50,9 +54,6 @@
 </MudLayout>
 
 @code {
-    
-    
-    
     bool _drawerOpen = true;
 
     void DrawerToggle()
@@ -63,7 +64,7 @@
     #region Enable Dark Theme
     private MudTheme _theme = new();
     private bool _isDarkMode = true;
-
+    
     private bool ThemeChanged 
     {
         get;set;
@@ -81,4 +82,7 @@
         Console.WriteLine($"Is DarkMode {_isDarkMode}");
     }
     #endregion
+
+    
 }
+

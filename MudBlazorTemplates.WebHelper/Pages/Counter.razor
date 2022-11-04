@@ -1,10 +1,15 @@
 ﻿@page "/counter"
+@using System.Net.Http.Json
+@using System.Text.Json.Nodes
+@inject IJSRuntime JS
 
 <PageTitle>Counter</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">Counter</MudText>
 <MudText Class="mb-4">Current count: @currentCount</MudText>
 <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="IncrementCount">Click me</MudButton>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="CallAWS">Call AWS</MudButton>
+
 
 
 @code {
@@ -14,4 +19,26 @@
     {
         currentCount++;
     }
+    
+    public class EmailDetails
+    {
+        public string Name { get; set; }
+        public string Server { get; set; }
+        public string Domain { get; set; }
+    }
+
+    private  void CallAWS() //async Task
+    {
+        var result1 = JS.InvokeAsync<EmailDetails>("AjaxCall", "JS function called from .NET");
+        //var result = await JS.InvokeAsync<object>("AjaxCall", "JS function called from .NET");
+        //Console.WriteLine($"AjaxCall Result: {result}");
+    //https://s2arj6z657.execute-api.ap-south-1.amazonaws.com/Prod/api/values
+        // Console.WriteLine($"Base URL : {_httpClient.BaseAddress}");
+        // var words = _httpClient.GetFromJsonAsync<string[]>("https://localhost:65501/api/values");
+        // Console.WriteLine(words);
+        // var anyType = _httpClient.GetAsync("api/values");
+        // Console.WriteLine(anyType);
+    //var items = _httpClient.GetFromJsonAsync<string[]>("api/values");
+    }
+
 }

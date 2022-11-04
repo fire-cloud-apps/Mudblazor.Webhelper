@@ -8,4 +8,12 @@
 @using Microsoft.JSInterop
 @using MudBlazor
 @using MudBlazorTemplates.WebHelper
+@using MudBlazorTemplates.WebHelper.Service
 @using MudBlazorTemplates.WebHelper.Shared
+
+@inject IConfiguration _configuration
+@inject HttpClient _httpClient
+@inject NavigationManager _navigationManager
+@inject ILocalStorageService _localStore
+@inject IAuthenticationService _authService
+@inject IUserService _userService
